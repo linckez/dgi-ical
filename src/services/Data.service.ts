@@ -37,7 +37,7 @@ export class DataService {
         location: 'Indgang Vest',
       });
 
-      cal.saveSync('foo.ical');
+      cal.saveSync('foo2.ical');
 
       // eslint-disable-next-line no-console
       console.log(events);
