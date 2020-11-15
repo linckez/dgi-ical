@@ -24,8 +24,11 @@
   "dependencies": {
     "@lego/eslint-config-prettier": "1.8.0",
     "@lego/eslint-config-typescript": "1.9.0",
+    "@types/xml2js": "^0.4.6",
     "axios": "^0.21.0",
     "dotenv": "^8.2.0",
-    "polly-js": "^1.6.8"
+    "ical-generator": "^1.15.2",
+    "polly-js": "^1.6.8",
+    "xml2js": "^0.4.23"
   }
 }
