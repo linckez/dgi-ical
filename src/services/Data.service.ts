@@ -1,9 +1,18 @@
+/* eslint-disable no-console */
 // eslint-disable-next-line import/no-unassigned-import
 import 'dotenv/config';
 import axios, { AxiosRequestConfig, AxiosError } from 'axios';
 import { ParserOptions, parseString, parseStringPromise } from 'xml2js';
 import ical from 'ical-generator';
 import moment from 'moment';
+
+export type event = {
+  startTime: string;
+  endTime: string;
+  location: string;
+  eventName: string;
+  roomId: number;
+};
 
 export class DataService {
   public async foobar(): Promise<unknown> {
@@ -25,24 +34,36 @@ export class DataService {
     try {
       const request = await (await axios.request(options)).data;
       const jsonData: any = await parseStringPromise(request);
-      const events: any = jsonData.Events.Event;
+      const filtered: any[] = jsonData.Events.Event;
 
-      const cal = ical({ domain: 'github.com', name: 'my second iCal' });
+      const events: event[] = filtered
+        .map((v) => {
+          return {
+            startTime: v.Starttime[0],
+            endTime: v.Endtime[0],
+            location: v.RoomDescription[0],
+            eventName: v.Eventname[0],
+            roomId: Number(v.RoomUsage[0]),
+          };
+        })
+        .filter((v) => v.roomId === 6);
 
-      cal.createEvent({
-        start: '11-17-2020 09:45',
-        end: '11-17-2020 16:00',
-        summary: 'Indgang til DK-CAMP leverand�rmesse',
-        description: 'Ind Vest',
-        location: 'Indgang Vest',
-      });
+      const cal = ical({ domain: 'github.com', name: 'DGI Vejle Kalender' });
 
-      cal.saveSync('foo2.ical');
+      for (const i of events) {
+        cal.createEvent({
+          start: i.startTime,
+          end: i.endTime,
+          summary: i.eventName,
+          location: i.location,
+        });
+      }
 
-      // eslint-disable-next-line no-console
+      await cal.saveSync('./public/dgi.ical');
+
       console.log(events);
 
-      return 'asdasdasdas';
+      return 'Done';
     } catch (err) {
       throw err;
     }
