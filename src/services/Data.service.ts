@@ -32,9 +32,9 @@ export class DataService {
     };
 
     try {
-      const request = await (await axios.request(options)).data;
-      const jsonData: any = await parseStringPromise(request);
-      const filtered: any[] = jsonData.Events.Event;
+      const request = await axios.request(options);
+      const parsedXML: any = await parseStringPromise(request.data);
+      const filtered: any[] = parsedXML.Events.Event;
 
       const events: event[] = filtered
         .map((v) => {

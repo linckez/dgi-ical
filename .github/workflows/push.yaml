@@ -1,0 +1,11 @@
+on: push
+name: CI Build
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Build
+        uses: actions/setup-node@v1
+      - run: npm build
