@@ -55,7 +55,7 @@ export class DataService {
 
       //save the ical file
       await cal.saveSync('./public/dgi.ical');
-      fs.writeFileSync('./public/build.log', `Generated on ${new Date(Date.now()).toISOString()}`);
+      fs.writeFileSync('./public/log.html', `<p>Generated on ${new Date(Date.now()).toISOString()}</p>`);
     } catch (err) {
       throw err;
     }
