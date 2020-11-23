@@ -6,6 +6,7 @@ import axios, { AxiosRequestConfig } from 'axios';
 import { parseStringPromise } from 'xml2js';
 import ical from 'ical-generator';
 import moment from 'moment';
+import * as fs from 'fs';
 
 
 export class DataService {
@@ -48,11 +49,13 @@ export class DataService {
           location: i.location,
         });
       }
-
+      const timeElapsed = Date.now();
+      const today = new Date(Date.now());
       console.log('generated ical calendar');
 
       //save the ical file
       await cal.saveSync('./public/dgi.ical');
+      fs.writeFileSync('./public/build.log', `Generated on ${new Date(Date.now()).toISOString()}`);
     } catch (err) {
       throw err;
     }
