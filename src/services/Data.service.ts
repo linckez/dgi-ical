@@ -1,41 +1,28 @@
 /* eslint-disable no-console */
 // eslint-disable-next-line import/no-unassigned-import
 import 'dotenv/config';
-import axios, { AxiosRequestConfig, AxiosError } from 'axios';
-import { ParserOptions, parseString, parseStringPromise } from 'xml2js';
+import { event } from '../models/services';
+import axios, { AxiosRequestConfig } from 'axios';
+import { parseStringPromise } from 'xml2js';
 import ical from 'ical-generator';
 import moment from 'moment';
 
-export type event = {
-  startTime: string;
-  endTime: string;
-  location: string;
-  eventName: string;
-  roomId: number;
-};
 
 export class DataService {
-  public async foobar(): Promise<unknown> {
-    try {
-      const result = await this.fetchData();
-
-      return result;
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  private async fetchData(): Promise<unknown> {
+  public async updateIcal(): Promise<void> {
     const options: AxiosRequestConfig = {
       method: 'GET',
       url: 'https://rooms-dgihusetvejle.azurewebsites.net/30.xml',
     };
 
     try {
+      // fetch event data
       const request = await axios.request(options);
       const parsedXML: any = await parseStringPromise(request.data);
       const filtered: any[] = parsedXML.Events.Event;
+      console.log('fetched data');
 
+      // filter the events to Svømmehallen
       const events: event[] = filtered
         .map((v) => {
           return {
@@ -48,22 +35,24 @@ export class DataService {
         })
         .filter((v) => v.roomId === 6);
 
-      const cal = ical({ domain: 'github.com', name: 'DGI Vejle Kalender' });
+        console.log(events)
 
+        
+      //create ical content
+      const cal = ical({ domain: 'github.com', name: 'DGI Vejle Kalender' });
       for (const i of events) {
         cal.createEvent({
-          start: i.startTime,
-          end: i.endTime,
+          start: moment(i.startTime, "MM-DD-YYYY HH:mm").toDate(),
+          end: moment(i.endTime, "MM-DD-YYYY HH:mm").toDate(),
           summary: i.eventName,
           location: i.location,
         });
       }
 
+      console.log('generated ical calendar');
+
+      //save the ical file
       await cal.saveSync('./public/dgi.ical');
-
-      console.log(events);
-
-      return 'Done';
     } catch (err) {
       throw err;
     }

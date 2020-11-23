@@ -5,8 +5,7 @@ import { DataService } from './services/Data.service';
 // Services
 const data = new DataService();
 
-
-async function foobar() {
-  console.log(await data.foobar());
+async function main() {
+  await data.updateIcal();
 }
-foobar();
+main();
