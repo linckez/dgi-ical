@@ -8,7 +8,6 @@ import ical from 'ical-generator';
 import moment from 'moment';
 import * as fs from 'fs';
 
-
 export class DataService {
   public async updateIcal(): Promise<void> {
     const options: AxiosRequestConfig = {
@@ -36,15 +35,19 @@ export class DataService {
         })
         .filter((v) => v.roomId === 6);
 
-        console.log(events)
+      console.log(events);
 
-        
       //create ical content
-      const cal = ical({ domain: 'github.com', name: 'DGI Vejle Kalender' });
+      const cal = ical({
+        domain: 'github.com',
+        name: 'DGI Vejle Kalender',
+        timezone: 'Europe/Copenhagen',
+      }).ttl(60 * 60 * 24); //set refresh interval to 24 hours.
+
       for (const i of events) {
         cal.createEvent({
-          start: moment(i.startTime, "MM-DD-YYYY HH:mm").toDate(),
-          end: moment(i.endTime, "MM-DD-YYYY HH:mm").toDate(),
+          start: moment(i.startTime, 'MM-DD-YYYY HH:mm').toDate(),
+          end: moment(i.endTime, 'MM-DD-YYYY HH:mm').toDate(),
           summary: i.eventName,
           location: i.location,
         });
@@ -55,7 +58,10 @@ export class DataService {
 
       //save the ical file
       await cal.saveSync('./public/dgi.ical');
-      fs.writeFileSync('./public/log.html', `<p>Generated on ${new Date(Date.now()).toISOString()}</p>`);
+      fs.writeFileSync(
+        './public/log.html',
+        `<p>Generated on ${new Date(Date.now()).toISOString()}</p>`
+      );
     } catch (err) {
       throw err;
     }
