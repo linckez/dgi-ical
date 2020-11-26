@@ -34,9 +34,7 @@ export class DataService {
           };
         })
         .filter((v) => v.roomId === 6);
-
-      console.log(events);
-
+      
       //create ical content
       const cal = ical({
         domain: 'github.com',
