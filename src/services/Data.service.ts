@@ -55,9 +55,9 @@ export class DataService {
       console.log('generated ical calendar');
 
       //save the ical file
-      await cal.saveSync('./public/dgi.ical');
+      await cal.saveSync('/home/runner/work/dgi-ical/dgi-ical/public/dgi.ical');
       fs.writeFileSync(
-        './public/log.html',
+        '/home/runner/work/dgi-ical/dgi-ical/public/log.html',
         `<p>Generated on ${new Date(Date.now()).toISOString()}</p>`
       );
     } catch (err) {
